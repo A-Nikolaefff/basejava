@@ -5,13 +5,17 @@ import java.util.Arrays;
  */
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
+    int size = 0;
 
     void clear() {
-        for (int i = 0; i < storage.length; i++) {
-            if (storage[i] != null) {
-                storage[i] = null;
-            } else {
-                return;
+        if (size != 0) {
+            for (int i = 0; i < storage.length; i++) {
+                if (storage[i] != null) {
+                    storage[i] = null;
+                } else {
+                    size = 0;
+                    return;
+                }
             }
         }
     }
@@ -20,6 +24,7 @@ public class ArrayStorage {
         for (int i = 0; i < storage.length; i++) {
             if (storage[i] == null) {
                 storage[i] = r;
+                size++;
                 return;
             }
         }
@@ -28,7 +33,7 @@ public class ArrayStorage {
     Resume get(String uuid) {
         for (int i = 0; i < storage.length; i++) {
             if (storage[i] != null) {
-                if (storage[i].uuid == uuid) {
+                if (storage[i].uuid.equals(uuid)) {
                     return storage[i];
                 }
             } else {
@@ -42,9 +47,10 @@ public class ArrayStorage {
         boolean deleted = false;
         for (int i = 0; i < storage.length; i++) {
             if (!deleted) {
-                if (storage[i].uuid == uuid) {
+                if (storage[i].uuid.equals(uuid)) {
                     storage[i] = null;
                     deleted = true;
+                    size--;
                 }
             } else {
                 if (storage[i] != null) {
@@ -61,15 +67,10 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        return Arrays.copyOf(storage, size());
+        return Arrays.copyOf(storage, size);
     }
 
     int size() {
-        for (int i = 0; i < storage.length; i++) {
-            if (storage[i] == null) {
-                return i;
-            }
-        }
-        return 0;
+        return size;
     }
 }
