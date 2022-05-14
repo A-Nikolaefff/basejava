@@ -8,59 +8,43 @@ public class ArrayStorage {
     int size = 0;
 
     void clear() {
-        if (size != 0) {
-            for (int i = 0; i < storage.length; i++) {
-                if (storage[i] != null) {
-                    storage[i] = null;
-                } else {
-                    size = 0;
-                    return;
-                }
-            }
-        }
+        Arrays.fill(storage, null);
+        size = 0;
     }
 
     void save(Resume r) {
-        for (int i = 0; i < storage.length; i++) {
-            if (storage[i] == null) {
-                storage[i] = r;
-                size++;
-                return;
-            }
+        if (size < storage.length) {
+            storage[size] = r;
+            size++;
         }
     }
 
     Resume get(String uuid) {
-        for (int i = 0; i < storage.length; i++) {
-            if (storage[i] != null) {
-                if (storage[i].uuid.equals(uuid)) {
-                    return storage[i];
-                }
-            } else {
-                break;
-            }
+        int index = find(uuid);
+        if (index != -1) {
+            return storage[index];
         }
         return null;
     }
 
     void delete(String uuid) {
-        boolean deleted = false;
-        for (int i = 0; i < storage.length; i++) {
-            if (!deleted) {
-                if (storage[i].uuid.equals(uuid)) {
-                    storage[i] = null;
-                    deleted = true;
-                    size--;
-                }
-            } else {
-                if (storage[i] != null) {
-                    storage[i - 1] = storage[i];
-                } else {
-                    storage[i - 1] = null;
-                    return;
-                }
+        int index = find(uuid);
+        if (index != -1) {
+            if (index != size - 1) {
+                storage[index] = storage[size - 1];
+            }
+            storage[size - 1] = null;
+            size--;
+        }
+    }
+
+    private int find(String uuid) {
+        for (int i = 0; i < size; i++) {
+            if (storage[i].uuid.equals(uuid)) {
+                return i;
             }
         }
+        return -1;
     }
 
     /**
