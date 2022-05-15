@@ -8,7 +8,7 @@ public class ArrayStorage {
     int size = 0;
 
     void clear() {
-        Arrays.fill(storage, null);
+        Arrays.fill(storage, 0, size - 1, null);
         size = 0;
     }
 
@@ -20,7 +20,7 @@ public class ArrayStorage {
     }
 
     Resume get(String uuid) {
-        int index = find(uuid);
+        int index = findIndex(uuid);
         if (index != -1) {
             return storage[index];
         }
@@ -28,17 +28,15 @@ public class ArrayStorage {
     }
 
     void delete(String uuid) {
-        int index = find(uuid);
+        int index = findIndex(uuid);
         if (index != -1) {
-            if (index != size - 1) {
-                storage[index] = storage[size - 1];
-            }
+            storage[index] = storage[size - 1];
             storage[size - 1] = null;
             size--;
         }
     }
 
-    private int find(String uuid) {
+    private int findIndex(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].uuid.equals(uuid)) {
                 return i;
