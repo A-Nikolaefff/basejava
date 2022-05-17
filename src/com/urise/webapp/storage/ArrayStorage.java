@@ -8,7 +8,8 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private Resume[] storage = new Resume[10000];
+    protected static final int storageSize = 10000;
+    private final Resume[] storage = new Resume[storageSize];
     private int size = 0;
 
     public void clear() {
@@ -19,14 +20,12 @@ public class ArrayStorage {
     public void save(Resume r) {
         if (size == storage.length) {
             System.out.println("The storage is completely full.");
-            return;
-        }
-        if (findIndex(r.getUuid()) != -1) {
+        } else if (findIndex(r.getUuid()) != -1) {
             System.out.println("Resume \"" + r.getUuid() + "\" already exists.");
-            return;
+        } else {
+            storage[size] = r;
+            size++;
         }
-        storage[size] = r;
-        size++;
     }
 
     public void update(Resume r) {
@@ -34,29 +33,30 @@ public class ArrayStorage {
         int index = findIndex(uuid);
         if (index == -1) {
             System.out.println("Cannot update resume \"" + uuid + "\" because resume \"" + uuid + "\" does not exist.");
-            return;
+        } else {
+            storage[index] = r;
         }
-        storage[index] = r;
     }
 
     public Resume get(String uuid) {
         int index = findIndex(uuid);
-        if (index != -1) {
+        if (index == -1) {
+            System.out.println("Cannot get resume \"" + uuid + "\" because resume \"" + uuid + "\" does not exist.");
+            return null;
+        } else {
             return storage[index];
         }
-        System.out.println("Cannot get resume \"" + uuid + "\" because resume \"" + uuid + "\" does not exist.");
-        return null;
     }
 
     public void delete(String uuid) {
         int index = findIndex(uuid);
-        if (index != -1) {
+        if (index == -1) {
+            System.out.println("Cannot delete resume \"" + uuid + "\" because resume \"" + uuid + "\" does not exist.");
+        } else {
             storage[index] = storage[size - 1];
             storage[size - 1] = null;
             size--;
-            return;
         }
-        System.out.println("Cannot delete resume \"" + uuid + "\" because resume \"" + uuid + "\" does not exist.");
     }
 
     private int findIndex(String uuid) {
