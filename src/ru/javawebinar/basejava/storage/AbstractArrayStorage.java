@@ -1,5 +1,8 @@
 package ru.javawebinar.basejava.storage;
 
+import ru.javawebinar.basejava.exception.ExistStorageException;
+import ru.javawebinar.basejava.exception.NotExistStorageException;
+import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
@@ -25,8 +28,7 @@ public abstract class AbstractArrayStorage implements Storage {
     public Resume get(String uuid) {
         int index = findIndex(uuid);
         if (index < 0) {
-            System.out.println("Cannot get resume \"" + uuid + "\" because resume \"" + uuid + "\" does not exist.");
-            return null;
+            throw new NotExistStorageException(uuid);
         }
         return storage[index];
     }
@@ -35,7 +37,7 @@ public abstract class AbstractArrayStorage implements Storage {
         String uuid = r.getUuid();
         int index = findIndex(uuid);
         if (index < 0) {
-            System.out.println("Cannot update resume \"" + uuid + "\" because resume \"" + uuid + "\" does not exist.");
+            throw new NotExistStorageException(r.getUuid());
         } else {
             storage[index] = r;
         }
@@ -44,9 +46,9 @@ public abstract class AbstractArrayStorage implements Storage {
     public void save(Resume r) {
         int index = findIndex(r.getUuid());
         if (index >= 0) {
-            System.out.println("Resume \"" + r.getUuid() + "\" already exists.");
+            throw new ExistStorageException(r.getUuid());
         } else if (size == STORAGE_LIMIT) {
-            System.out.println("The storage is completely full.");
+            throw new StorageException("Storage overflow", r.getUuid());
         } else {
             insertElement(r, index);
             size++;
@@ -56,7 +58,7 @@ public abstract class AbstractArrayStorage implements Storage {
     public void delete(String uuid) {
         int index = findIndex(uuid);
         if (index < 0) {
-            System.out.println("Cannot delete resume \"" + uuid + "\" because resume \"" + uuid + "\" does not exist.");
+            throw new NotExistStorageException(uuid);
         } else {
             removeElement(index);
             size--;
