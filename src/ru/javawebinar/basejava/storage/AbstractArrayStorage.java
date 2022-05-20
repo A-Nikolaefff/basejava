@@ -14,7 +14,7 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     public void clear() {
-        Arrays.fill(storage, 0, size - 1, null);
+        Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
@@ -23,7 +23,7 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     public Resume get(String uuid) {
-        int index = getIndex(uuid);
+        int index = findIndex(uuid);
         if (index < 0) {
             System.out.println("Cannot get resume \"" + uuid + "\" because resume \"" + uuid + "\" does not exist.");
             return null;
@@ -33,7 +33,7 @@ public abstract class AbstractArrayStorage implements Storage {
 
     public void update(Resume r) {
         String uuid = r.getUuid();
-        int index = getIndex(uuid);
+        int index = findIndex(uuid);
         if (index < 0) {
             System.out.println("Cannot update resume \"" + uuid + "\" because resume \"" + uuid + "\" does not exist.");
         } else {
@@ -42,32 +42,30 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     public void save(Resume r) {
-        if (size == STORAGE_LIMIT) {
+        int index = findIndex(r.getUuid());
+        if (index >= 0) {
+            System.out.println("Resume \"" + r.getUuid() + "\" already exists.");
+        } else if (size == STORAGE_LIMIT) {
             System.out.println("The storage is completely full.");
         } else {
-            int index = getIndex(r.getUuid());
-            if (index >= 0) {
-                System.out.println("Resume \"" + r.getUuid() + "\" already exists.");
-            } else {
-                insert(r, index);
-                size++;
-            }
+            insertElement(r, index);
+            size++;
         }
     }
 
     public void delete(String uuid) {
-        int index = getIndex(uuid);
+        int index = findIndex(uuid);
         if (index < 0) {
             System.out.println("Cannot delete resume \"" + uuid + "\" because resume \"" + uuid + "\" does not exist.");
         } else {
-            remove(index);
+            removeElement(index);
             size--;
         }
     }
 
-    protected abstract int getIndex(String uuid);
+    protected abstract int findIndex(String uuid);
 
-    protected abstract void insert(Resume r, int index);
+    protected abstract void insertElement(Resume r, int index);
 
-    protected abstract void remove(int index);
+    protected abstract void removeElement(int index);
 }
