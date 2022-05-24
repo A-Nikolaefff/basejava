@@ -27,7 +27,7 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Before
-    public void setUp() throws StorageException {
+    public void setUp() {
         storage.clear();
         storage.save(RESUME_1);
         storage.save(RESUME_2);
@@ -82,10 +82,11 @@ public abstract class AbstractArrayStorageTest {
         storage.save(RESUME_1);
     }
 
-    @Test
+    @Test(expected = NotExistStorageException.class)
     public void delete() {
         storage.delete(UUID_1);
         assertSize(2);
+        storage.delete(UUID_4);
     }
 
     @Test(expected = NotExistStorageException.class)

@@ -1,16 +1,20 @@
 package ru.javawebinar.basejava.storage;
 
-import ru.javawebinar.basejava.exception.ExistStorageException;
-import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
 
-public abstract class AbstractArrayStorage implements Storage {
+public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10000;
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
+
+    protected abstract int doFindIndex(String uuid);
+
+    protected abstract void doInsert(Resume r, int index);
+
+    protected abstract void doErase(int index);
 
     public int size() {
         return size;
@@ -25,49 +29,34 @@ public abstract class AbstractArrayStorage implements Storage {
         return Arrays.copyOf(storage, size);
     }
 
-    public Resume get(String uuid) {
-        int index = findIndex(uuid);
-        if (index < 0) {
-            throw new NotExistStorageException(uuid);
-        }
+    @Override
+    protected int getIndex(String uuid) {
+        return doFindIndex(uuid);
+    }
+
+    @Override
+    protected Resume doGet(int index) {
         return storage[index];
     }
 
-    public void update(Resume r) {
-        String uuid = r.getUuid();
-        int index = findIndex(uuid);
-        if (index < 0) {
-            throw new NotExistStorageException(r.getUuid());
-        } else {
-            storage[index] = r;
-        }
-    }
-
-    public void save(Resume r) {
-        int index = findIndex(r.getUuid());
-        if (index >= 0) {
-            throw new ExistStorageException(r.getUuid());
-        } else if (size == STORAGE_LIMIT) {
+    @Override
+    protected void doSave(Resume r, int index) {
+        if (size == STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", r.getUuid());
         } else {
-            insertElement(r, index);
+            doInsert(r, index);
             size++;
         }
     }
 
-    public void delete(String uuid) {
-        int index = findIndex(uuid);
-        if (index < 0) {
-            throw new NotExistStorageException(uuid);
-        } else {
-            removeElement(index);
-            size--;
-        }
+    @Override
+    protected void doUpdate(Resume r, int index) {
+        storage[index] = r;
     }
 
-    protected abstract int findIndex(String uuid);
-
-    protected abstract void insertElement(Resume r, int index);
-
-    protected abstract void removeElement(int index);
+    @Override
+    protected void doDelete(int index) {
+        doErase(index);
+        size--;
+    }
 }
