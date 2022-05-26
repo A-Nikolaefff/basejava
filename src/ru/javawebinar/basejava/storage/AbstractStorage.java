@@ -6,7 +6,7 @@ import ru.javawebinar.basejava.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
 
-    protected abstract int getSearchKey(String uuid);
+    protected abstract Object getSearchKey(String uuid);
 
     protected abstract void doSave(Resume r, Object searchKey);
 
