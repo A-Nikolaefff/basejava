@@ -19,13 +19,8 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume[] getAll() {
-        return storage.toArray(new Resume[0]);
-    }
-
-    @Override
     protected Object getSearchKey(String uuid) {
-        Resume targetResume = new Resume(uuid);
+        Resume targetResume = new Resume(uuid, "dummy");
         for (int i = 0; i < storage.size(); i++) {
             if (storage.get(i).equals(targetResume)) {
                 return i;
@@ -57,5 +52,10 @@ public class ListStorage extends AbstractStorage {
     @Override
     protected boolean isExisting(Object searchKey) {
         return (int) searchKey >= 0;
+    }
+
+    @Override
+    protected List<Resume> doCopy() {
+        return new ArrayList<Resume>(storage);
     }
 }

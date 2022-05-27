@@ -10,17 +10,24 @@ public class Resume implements Comparable<Resume> {
 
     // Unique identifier
     private final String uuid;
+    private final String fullName;
 
-    public Resume() {
-        this(UUID.randomUUID().toString());
+
+    public Resume(String fullName) {
+        this(UUID.randomUUID().toString(), fullName);
     }
 
-    public Resume(String uuid) {
+    public Resume(String uuid, String fullName) {
         this.uuid = Objects.requireNonNull(uuid, "uuid cannot be null)");
+        this.fullName = Objects.requireNonNull(fullName, "fullName cannot be null)");
     }
 
     public String getUuid() {
         return uuid;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 
     @Override
