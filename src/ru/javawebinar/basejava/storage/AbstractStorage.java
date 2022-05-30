@@ -26,7 +26,7 @@ public abstract class AbstractStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         List<Resume> list = doCopy();
-        list.sort(Comparator.comparing((Resume resume) -> resume.getFullName()).thenComparing(resume -> resume.getUuid()));
+        list.sort(Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid));
         return list;
     }
 
